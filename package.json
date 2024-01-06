@@ -1,16 +1,14 @@
 {
-  "name": "major-project",
+  "name": "mini-airbnb",
   "version": "1.0.0",
-  "description": "",
+  "description": "A mini version of airbnb.",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
     "dev": "nodemon index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Manish Pali",
   "license": "ISC",
   "dependencies": {
     "@mapbox/mapbox-sdk": "^0.15.3",
