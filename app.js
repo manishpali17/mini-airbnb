@@ -92,3 +92,6 @@ app.use((err, req, res, next) => {
   res.status(statusCode).render("error.ejs", { message });
   next();
 });
+// Todo 
+// updating listing schema adding categories
+// listing controle adding a pipeline to sarch by categories title
