@@ -6,30 +6,38 @@ import { dirname } from "path";
 import { join } from "path";
 import methodoverride from "method-override";
 import { ExpressError } from "./utils/ExpressError.js";
-import listings from "./routes/listing.js";
-import reviews from "./routes/review.js";
-import userRoute from "./routes/user.js";
 import session from "express-session";
 import flash from "connect-flash";
 import passport from "passport";
 import localStrategy from "passport-local";
 import { User } from "./models/user.js";
+import { DB_NAME } from "./constants.js";
+import MongoStore from "connect-mongo";
+
+ const sessionStore = new MongoStore({
+   mongoUrl: `${process.env.MONGODB_URL}/${DB_NAME}`,
+   dbName: "WonderLustDB",
+   collectionName: "sessions", // specify the collection name for sessions
+ });
+
 
 if (process.env.NODE_ENV != "production") {
-  dotenv.config();
+  dotenv.config({ path: "./.env" });
 }
 
 export const app = express();
 
 const sessionOptions = {
-  secret: "my name is manish pali ",
+  secret: process.env.SESSION_SECRET || "your-secret-key",
   resave: false,
   saveUninitialized: true,
   cookie: {
     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
   },
+  store: sessionStore,
 };
 
 //view setup
@@ -60,6 +68,13 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static(join(__dirname, "public")));
 app.use(methodoverride("_method"));
+
+//routes import 
+import listings from "./routes/listing.js";
+import reviews from "./routes/review.js";
+import userRoute from "./routes/user.js";
+
+//routes
 app.use("/", userRoute);
 app.use("/listings", listings);
 app.use("/listings/:id/reviews", reviews);
@@ -77,9 +92,3 @@ app.use((err, req, res, next) => {
   res.status(statusCode).render("error.ejs", { message });
   next();
 });
-
-//todo
-// mutiple file upload
-// delete user account
-// sign with o-auth
-// work on frontend

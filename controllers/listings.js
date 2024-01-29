@@ -1,8 +1,7 @@
 import { Listing } from "../models/listing.js";
 import mbxGeocoding from "@mapbox/mapbox-sdk/services/geocoding.js";
-import dotenv from "dotenv";
 import { destroy } from "../utils/cloudConfig.js";
-dotenv.config();
+
 const mapToken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 
@@ -14,6 +13,7 @@ const index = async (req, res) => {
 const renderNewForm = (req, res) => {
   res.render("listings/new.ejs");
 };
+
 const showListing = async (req, res) => {
   let { id } = req.params;
   const listing = await Listing.findById(id)
@@ -27,19 +27,21 @@ const showListing = async (req, res) => {
 };
 
 const updateListing = async (req, res) => {
+  let { id } = req.params;
   let response = await geocodingClient
     .forwardGeocode({
-      query: req.body.listings.location,
+      query: req.body?.listings?.location,
       limit: 1,
     })
     .send();
 
-  let { id } = req.params;
   const updatedListing = await Listing.findByIdAndUpdate(id, {
     ...req.body.listings,
   });
+
   updatedListing.geometry = response.body.features[0].geometry;
   await updatedListing.save();
+
   if (typeof req.file !== "undefined") {
     let url = req.file.path;
     let filename = req.file.filename;
@@ -57,8 +59,12 @@ const createListing = async (req, res) => {
       limit: 1,
     })
     .send();
-  let url = req.file.path;
-  let filename = req.file.filename;
+  let url;
+  let filename;
+  if (typeof req.file !== "undefined") {
+     url = req.file.path;
+    filename = req.file.filename;
+  }
   const newListing = new Listing(req.body.listings);
   newListing.image = { url, filename };
   newListing.owner = req.user._id;

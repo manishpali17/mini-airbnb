@@ -1,29 +1,39 @@
-import mongoose from "mongoose";
 import { data } from "./data.js";
 import { Listing } from "../models/listing.js";
+import { User } from "../models/user.js"
+import connectDB from "../db/index.js";
 
-// For initializing the database with sample data, add a user to use their userId as an owner to gain access to update and delete listings.
+// For initializing you can simply run this file or run script npm seed 
+// the defult user name is  Admin and password admin@123 you can change them below
+
+
+
 let sampleListings = data;
-
-async function main() {
-  await mongoose.connect("your connection string");
-}
-main()
+connectDB()
   .then(() => {
     console.log("connected to DB");
   })
   .catch((e) => {
     console.log(e);
   });
+
+
+
 const initDB = async () => {
+  await User.deleteMany({})
   await Listing.deleteMany({});
-  // create a user through sign up and use userid as a owner .
+  const newUser = new User({
+    email: "admin@gmail.com",
+    username: "Admin",
+  });
+  const registeredUser = await User.register(newUser, "admin@123");
   sampleListings = sampleListings.map((el) => ({
     ...el,
-    owner: "your userId for smaple data",
+    owner: registeredUser._id,
   }));
   await Listing.insertMany(sampleListings);
-  console.log("data was initialized");
+  console.log("data is initialized with user Name Admin and password admin@123");
+  process.exit(1)
 };
 
 initDB();

@@ -5,3 +5,6 @@ node_modules
 build
 *.env
 .env
+*.md
+package-lock.json
+package.json

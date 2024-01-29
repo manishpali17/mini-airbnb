@@ -21,7 +21,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="image" class="form-label">Upload Image</label>
-                    <input type="file" id="image" class="form-control" accept=".png, .jpg, .jpeg" name="listings[image]">
+                    <input type="file" id="image" class="form-control" accept=".png, .jpg, .jpeg" name="listings[image]" required>
                     <div class="valid-feedback">That looks good</div>
                     <div class="invalid-feedback">less 3mb only</div>
                 </div>
@@ -29,14 +29,14 @@
                     <div class="mb-3 col-4">
                         <label for="price" class="form-label">Price</label>
                         <input type="number" class="form-control" 
-                        name="listings[price]" placeholder="1000" required
+                        name="listings[price]" placeholder="1000" id="price" required
                         min="1">
                         <div class="valid-feedback">That looks good</div>
                         <div class="invalid-feedback">Please provide a valid price.</div>
                     </div>
                     <div class="mb-3 col-md-8">
                         <label for="country" class="form-label">Country</label>
-                        <input type="text" class="form-control" name="listings[country]" placeholder="India" required>
+                        <input type="text" class="form-control" id="country" name="listings[country]" placeholder="India" required>
                         <div class="valid-feedback">That looks good</div>
                         <div class="invalid-feedback">Please provide a valid country.</div>
                     </div>
@@ -44,7 +44,7 @@
 
                 <div class="mb-3">
                     <label for="location" class="form-label">Location</label>
-                    <input type="text" class="form-control" name="listings[location]" placeholder="Agra, U.P" required>
+                    <input type="text" class="form-control" id="location" name="listings[location]" placeholder="Agra, U.P" required>
                     <div class="valid-feedback">That looks good</div>
                     <div class="invalid-feedback">Please provide a valid location.</div>
                 </div>

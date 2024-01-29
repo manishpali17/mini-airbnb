@@ -1,4 +1,5 @@
 import { User } from "../models/user.js";
+import { ExpressError } from "../utils/ExpressError.js";
 
 const signupRender = (req, res) => {
   res.render("listings/signup.ejs");
@@ -7,6 +8,9 @@ const signupRender = (req, res) => {
 const signup = async (req, res) => {
   try {
     let { username, email, password } = req.body;
+    if(!username||!email||!password){
+      throw new ExpressError(404,"All field are required")
+    }
     const newUser = new User({
       email,
       username,
