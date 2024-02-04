@@ -1,5 +1,5 @@
-import dotenv from "dotenv";
 import express from "express";
+import cors from "cors";
 import ejsmate from "ejs-mate";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -14,18 +14,22 @@ import { User } from "./models/user.js";
 import { DB_NAME } from "./constants.js";
 import MongoStore from "connect-mongo";
 
- const sessionStore = new MongoStore({
-   mongoUrl: `${process.env.MONGODB_URL}/${DB_NAME}`,
-   dbName: "WonderLustDB",
-   collectionName: "sessions", // specify the collection name for sessions
- });
-
-
-if (process.env.NODE_ENV != "production") {
-  dotenv.config({ path: "./.env" });
-}
+const sessionStore = new MongoStore({
+  mongoUrl: `${process.env.MONGODB_URL}`,
+  dbName: DB_NAME,
+  collectionName: "sessions",
+});
 
 export const app = express();
+
+app.set('trust proxy', 1);
+
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  })
+);
 
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "your-secret-key",
@@ -87,11 +91,12 @@ app.get("/", (req, res) => {
 app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Page not Found"));
 });
+
 app.use((err, req, res, next) => {
   let { statusCode = 500, message = "Somthig is worng" } = err;
   res.status(statusCode).render("error.ejs", { message });
   next();
 });
-// Todo 
+// Todo
 // updating listing schema adding categories
 // listing controle adding a pipeline to sarch by categories title
